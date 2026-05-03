@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Video Speed</h1>
+      <div class="host" id="host">--</div>
+    </header>
+
+    <section class="speed-display">
+      <button class="ctrl-btn" id="slower" title="-0.1x">−</button>
+      <div class="speed-value" id="speedValue">1.00x</div>
+      <button class="ctrl-btn" id="faster" title="+0.1x">＋</button>
+    </section>
+
+    <section class="presets">
+      <button data-speed="0.5">0.5x</button>
+      <button data-speed="0.75">0.75x</button>
+      <button data-speed="1.0">1.0x</button>
+      <button data-speed="1.25">1.25x</button>
+      <button data-speed="1.5">1.5x</button>
+      <button data-speed="1.75">1.75x</button>
+      <button data-speed="2.0">2.0x</button>
+      <button data-speed="2.5">2.5x</button>
+      <button data-speed="3.0">3.0x</button>
+      <button data-speed="4.0">4.0x</button>
+    </section>
+
+    <section class="custom">
+      <input type="number" id="customSpeed" min="0.1" max="16" step="0.05" placeholder="例: 1.85">
+      <button id="applyCustom">適用</button>
+    </section>
+
+    <section class="actions">
+      <button id="reset">リセット</button>
+      <button id="toggleWidget">ウィジェット表示切替</button>
+    </section>
+
+    <footer>
+      <div class="status" id="status">--</div>
+      <details>
+        <summary>キーボードショートカット</summary>
+        <ul>
+          <li><kbd>S</kbd>遅く</li>
+          <li><kbd>D</kbd>速く</li>
+          <li><kbd>R</kbd>リセット</li>
+          <li><kbd>Z</kbd>10秒戻る</li>
+          <li><kbd>X</kbd>10秒進む</li>
+          <li><kbd>V</kbd>表示切替</li>
+        </ul>
+      </details>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

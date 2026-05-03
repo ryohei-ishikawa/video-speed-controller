@@ -1,0 +1,99 @@
+#vsc-widget {
+  position: fixed !important;
+  top: 80px !important;
+  right: 20px !important;
+  z-index: 2147483647 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 6px 8px !important;
+  background: rgba(20, 20, 25, 0.92) !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', sans-serif !important;
+  font-size: 13px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  transition: opacity 0.2s, transform 0.15s, background 0.15s !important;
+  opacity: 0.85 !important;
+  pointer-events: auto !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  text-align: left !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+#vsc-widget * {
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: inherit !important;
+}
+
+#vsc-widget:hover {
+  opacity: 1 !important;
+}
+
+#vsc-widget.vsc-hidden {
+  display: none !important;
+}
+
+#vsc-widget.vsc-flash {
+  transform: scale(1.08) !important;
+  background: rgba(99, 102, 241, 0.95) !important;
+}
+
+#vsc-widget .vsc-handle {
+  cursor: move !important;
+  padding: 0 6px !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 14px !important;
+  letter-spacing: 1px !important;
+}
+
+#vsc-widget .vsc-btn {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  min-width: 26px !important;
+  height: 24px !important;
+  transition: background 0.15s !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#vsc-widget .vsc-btn:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+#vsc-widget .vsc-btn:active {
+  background: rgba(255, 255, 255, 0.4) !important;
+}
+
+#vsc-widget .vsc-speed {
+  min-width: 56px !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+  font-variant-numeric: tabular-nums !important;
+  padding: 0 4px !important;
+  color: #fff !important;
+}
+
+#vsc-widget .vsc-close {
+  margin-left: 4px !important;
+  font-size: 14px !important;
+  background: transparent !important;
+}
+
+#vsc-widget .vsc-close:hover {
+  background: rgba(239, 68, 68, 0.6) !important;
+}
