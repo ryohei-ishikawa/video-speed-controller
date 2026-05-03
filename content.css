@@ -1,7 +1,7 @@
 #vsc-widget {
   position: fixed !important;
-  top: 80px !important;
-  right: 20px !important;
+  top: 80px;
+  right: 20px;
   z-index: 2147483647 !important;
   display: flex !important;
   align-items: center !important;

@@ -201,10 +201,7 @@
       const h = widget.offsetHeight;
       const left = Math.max(0, Math.min(window.innerWidth - w, startLeft + dx));
       const top = Math.max(0, Math.min(window.innerHeight - h, startTop + dy));
-      widget.style.left = `${left}px`;
-      widget.style.top = `${top}px`;
-      widget.style.right = 'auto';
-      widget.style.bottom = 'auto';
+      setWidgetPosition(left, top);
     });
 
     document.addEventListener('mouseup', () => {
@@ -221,6 +218,16 @@
     });
   }
 
+  function setWidgetPosition(left, top) {
+    if (!widget) return;
+    const leftStr = typeof left === 'number' ? `${left}px` : left;
+    const topStr = typeof top === 'number' ? `${top}px` : top;
+    widget.style.setProperty('left', leftStr, 'important');
+    widget.style.setProperty('top', topStr, 'important');
+    widget.style.setProperty('right', 'auto', 'important');
+    widget.style.setProperty('bottom', 'auto', 'important');
+  }
+
   function applyPosition(pos) {
     if (!widget || !pos) {
       if (pos) {
@@ -228,10 +235,7 @@
       }
       return;
     }
-    if (pos.left) widget.style.left = pos.left;
-    if (pos.top) widget.style.top = pos.top;
-    widget.style.right = 'auto';
-    widget.style.bottom = 'auto';
+    if (pos.left && pos.top) setWidgetPosition(pos.left, pos.top);
   }
 
   function setSpeed(speed) {
