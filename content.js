@@ -22,6 +22,9 @@
   let speedDisplay = null;
   let videoElements = new Set();
   let flashTimer = null;
+  let lastReportedPresence = null;
+  const childPresence = new Map();
+  const PRESENCE_TTL_MS = 5000;
 
   init();
 
@@ -62,6 +65,7 @@
     }
     setupPostMessages();
     startVideoTracking();
+    setInterval(reportPresence, 2000);
   }
 
   function whenReady(fn) {
@@ -96,6 +100,51 @@
     video.addEventListener('loadeddata', () => applySpeedToVideo(video));
     video.addEventListener('play', () => applySpeedToVideo(video));
     video.addEventListener('canplay', () => applySpeedToVideo(video));
+    reportPresence();
+  }
+
+  function pruneVideoElements() {
+    for (const v of Array.from(videoElements)) {
+      if (!v.isConnected) videoElements.delete(v);
+    }
+  }
+
+  function pruneChildPresence() {
+    const now = Date.now();
+    for (const [win, info] of childPresence) {
+      if (now - info.ts > PRESENCE_TTL_MS) childPresence.delete(win);
+    }
+  }
+
+  function frameHasAnyVideos() {
+    pruneVideoElements();
+    pruneChildPresence();
+    if (videoElements.size > 0) return true;
+    for (const info of childPresence.values()) {
+      if (info.present) return true;
+    }
+    return false;
+  }
+
+  function reportPresence() {
+    const present = frameHasAnyVideos();
+    if (isTop) {
+      updateWidgetVisibility();
+    } else if (present !== lastReportedPresence) {
+      lastReportedPresence = present;
+      try {
+        window.parent.postMessage(
+          { [VSC_TAG]: true, type: 'PRESENCE', present, ts: Date.now() },
+          '*'
+        );
+      } catch (e) {}
+    }
+  }
+
+  function updateWidgetVisibility() {
+    if (!widget) return;
+    const shouldShow = widgetVisible && frameHasAnyVideos();
+    widget.classList.toggle('vsc-hidden', !shouldShow);
   }
 
   function applySpeedToVideo(video) {
@@ -113,6 +162,7 @@
   function setupMutationObserver() {
     const observer = new MutationObserver((mutations) => {
       let foundNew = false;
+      let removed = false;
       for (const mut of mutations) {
         for (const node of mut.addedNodes) {
           if (!node || node.nodeType !== 1) continue;
@@ -128,8 +178,23 @@
             findVideos(node);
           }
         }
+        for (const node of mut.removedNodes) {
+          if (!node || node.nodeType !== 1) continue;
+          if (node.tagName === 'VIDEO' && videoElements.has(node)) {
+            videoElements.delete(node);
+            removed = true;
+          } else if (node.querySelectorAll) {
+            node.querySelectorAll('video').forEach((v) => {
+              if (videoElements.has(v)) {
+                videoElements.delete(v);
+                removed = true;
+              }
+            });
+          }
+        }
       }
       if (foundNew && isTop) broadcastDown();
+      if (foundNew || removed) reportPresence();
     });
     try {
       observer.observe(document.documentElement || document, {
@@ -143,7 +208,7 @@
     if (widget) return;
     widget = document.createElement('div');
     widget.id = 'vsc-widget';
-    if (!widgetVisible) widget.classList.add('vsc-hidden');
+    widget.classList.add('vsc-hidden');
     widget.innerHTML = `
       <div class="vsc-handle" title="ドラッグで移動">⠿</div>
       <button class="vsc-btn vsc-slower" title="遅く (S)">−</button>
@@ -175,6 +240,7 @@
 
     setupDrag();
     updateDisplay();
+    updateWidgetVisibility();
   }
 
   function setupDrag() {
@@ -278,9 +344,7 @@
 
   function toggleWidget(visible) {
     widgetVisible = visible !== undefined ? visible : !widgetVisible;
-    if (widget) {
-      widget.classList.toggle('vsc-hidden', !widgetVisible);
-    }
+    updateWidgetVisibility();
     try {
       chrome.storage.local.set({ [STORAGE_VISIBLE]: widgetVisible });
     } catch (e) {}
@@ -371,6 +435,15 @@
             try {
               window.parent.postMessage({ [VSC_TAG]: true, type: 'REQUEST_SPEED' }, '*');
             } catch (er) {}
+          }
+          break;
+        case 'PRESENCE':
+          if (e.source) {
+            childPresence.set(e.source, {
+              present: !!msg.present,
+              ts: typeof msg.ts === 'number' ? msg.ts : Date.now(),
+            });
+            reportPresence();
           }
           break;
       }
